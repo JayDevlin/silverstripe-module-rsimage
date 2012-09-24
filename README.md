@@ -10,3 +10,6 @@ Overloads Image->cacheFilename() so the filename of a formatted image stays the 
 
 ## RSImage->cachedFilename():
 	assets/Uploads/_croppedImage800600/filename.jpg
+
+## Requirements
+	SilverStripe 3.0
