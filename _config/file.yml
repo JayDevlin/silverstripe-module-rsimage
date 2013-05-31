@@ -1,0 +1,8 @@
+---
+File:
+  class_for_file_extension:
+    '*': 'File'
+    'jpg': 'RSImage'
+    'jpeg': 'RSImage'
+    'png': 'RSImage'
+    'gif': 'RSImage'

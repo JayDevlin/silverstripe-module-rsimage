@@ -12,4 +12,4 @@ Overloads Image->cacheFilename() so the filename of a formatted image stays the 
 	assets/Uploads/_croppedImage800600/filename.jpg
 
 ## Requirements
-	SilverStripe 3.0
+	SilverStripe 3.1

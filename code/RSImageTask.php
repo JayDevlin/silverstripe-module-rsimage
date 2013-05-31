@@ -1,14 +1,11 @@
 <?php
 
 /**
- * - RSImageTask -
- *
- * Convert all images to RSImages
+ * Convert all existing images to RSImage
  */
 class RSImageTask extends BuildTask {
 
 	protected $enabled = true;
-	protected $title = "Convert all images to RSImages";
 	
 	function run($request) {
 		DB::query("UPDATE File SET ClassName = 'RSImage' WHERE ClassName = 'Image';");
