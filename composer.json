@@ -1,0 +1,20 @@
+{
+	"name": "JayDevlin/silverstripe-module-rsimage",
+	"description": "Overloads Image->cacheFilename() so the filename of a formatted image stays the same as the original.",
+	"type": "silverstripe-module",
+	"authors": [
+		{
+			"name": "Devlin"
+		}
+	],
+	"support": {
+		"issues": "http://github.com/JayDevlin/silverstripe-module-rsimage/issues"
+	},
+	"require": {
+		"silverstripe/framework": "~3.1",
+		"silverstripe/cms": "~3.1"
+	},
+	"extra": {
+		"installer-name": "rsimage"
+	}
+}
