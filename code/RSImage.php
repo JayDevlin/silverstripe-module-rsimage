@@ -39,7 +39,7 @@ class RSImage extends Image {
 	}
 
 	function onAfterUpload() {
-		parent::onBeforeDelete();
+		parent::onAfterUpload();
 		
 		$this->deleteFormattedRSImages();
 	}
