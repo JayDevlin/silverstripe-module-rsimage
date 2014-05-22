@@ -1,4 +1,6 @@
 ---
+Name: rsimage
+---
 File:
   class_for_file_extension:
     '*': 'File'
@@ -9,3 +11,6 @@ File:
 Filesystem:
   sync_blacklisted_patterns:
     - '/^\_/'
+Folder:
+  extensions:
+    - RSImageFolderExtension
