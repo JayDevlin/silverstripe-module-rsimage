@@ -6,3 +6,6 @@ File:
     'jpeg': 'RSImage'
     'png': 'RSImage'
     'gif': 'RSImage'
+Filesystem:
+  sync_blacklisted_patterns:
+    - '/^\_/'
