@@ -60,6 +60,51 @@ class RSImageTest extends FunctionalTest {
 		$image->delete();
 	}
 
+	/**
+	 * Tests that multiple image manipulations may be performed on a single Image
+	 */
+	public function testMultipleGenerateManipulationCalls() {
+		$image = $this->mockFileUpload('RSImageTest-testUpload.png');
+
+		$this->assertFileExists($image->getFullPath());
+		$this->assertEquals(
+			'assets/Uploads/RSImageTest/RSImageTest-testUpload.png',
+			$image->Filename
+		);
+
+		$imageFirst = $image->SetWidth(200);
+
+		$this->assertFileExists($imageFirst->getFullPath());
+		$this->assertEquals(
+			'assets/Uploads/RSImageTest/_SetWidth200/RSImageTest-testUpload.png',
+			$imageFirst->Filename
+		);
+
+		$imageSecond = $imageFirst->setHeight(100);
+		
+		$this->assertFileExists($imageSecond->getFullPath());
+		$this->assertEquals(
+			'assets/Uploads/RSImageTest/_SetWidth200_SetHeight100/RSImageTest-testUpload.png',
+			$imageSecond->Filename
+		);
+		
+		$imageThird = $imageSecond->CroppedImage(50,50);
+		
+		$this->assertFileExists($imageThird->getFullPath());
+		$this->assertEquals(
+			'assets/Uploads/RSImageTest/_SetWidth200_SetHeight100_CroppedImage5050/RSImageTest-testUpload.png',
+			$imageThird->Filename
+		);
+
+		$image->delete();
+
+		// test that files are removed
+		$this->assertFalse( file_exists($image->getFullPath()) );
+		$this->assertFalse( file_exists($imageFirst->getFullPath()) );
+		$this->assertFalse( file_exists($imageSecond->getFullPath()) );
+		$this->assertFalse( file_exists($imageThird->getFullPath()) );
+	}
+
 	public function testDeleteFormattedRSImages() {
 		$imageClass = new Image();
 		$image = $this->mockFileUpload('RSImageTest-testUpload.png');

@@ -7,6 +7,43 @@
  * @see Image->deleteFormattedImages()
  */
 class RSImage extends Image {
+	/**
+	 * Applied formats of a generated image
+	 * @var array
+	 */
+	protected $formats = array();
+	
+	/**
+	 * Return an image object representing the image in the given format.
+	 * This image will be generated using generateFormattedImage().
+	 * The generated image is cached, to flush the cache append ?flush=1 to your URL.
+	 * 
+	 * Just pass the correct number of parameters expected by the working function
+	 * 
+	 * @param string $format The name of the format.
+	 * @return Image_Cached
+	 */
+	public function getFormattedImage($format) {
+		$args = func_get_args();
+		
+		if($this->ID && $this->Filename && Director::fileExists($this->Filename)) {
+			$cacheFile = call_user_func_array(array($this, "cacheFilename"), $args);
+			
+			if(!file_exists(Director::baseFolder()."/".$cacheFile) || isset($_GET['flush'])) {
+				call_user_func_array(array($this, "generateFormattedImage"), $args);
+			}
+			
+			$cached = new RSImage_Cached($cacheFile);
+			// Pass through the title so the templates can use it
+			$cached->Title = $this->Title;
+			// Pass through the parent, to store cached images in correct folder.
+			$cached->ParentID = $this->ParentID;
+			$cached->formats = $this->formats;
+			$cached->formats[] = implode('', $args);
+			
+			return $cached;
+		}
+	}
 
 	/**
 	 * Return the filename for the cached image, given it's format name and arguments.
@@ -15,12 +52,12 @@ class RSImage extends Image {
 	 */
 	public function cacheFilename($format) {
 		$args = func_get_args();
-		array_shift($args);
 		$folder = $this->ParentID ? $this->Parent()->Filename : ASSETS_DIR . "/";
 
-		$format = $format . implode('', $args);
-
-		return $folder . '_' . $format . '/' . $this->Name;
+		$formats = $this->formats;
+		$formats[] = implode('', $args);
+		
+		return $folder . '_' . implode('_', $formats) . '/' . $this->Name;
 	}
 
 	function onBeforeWrite() {
@@ -105,4 +142,49 @@ class RSImage extends Image {
 		return $filesDeleted;
 	}
 
+}
+
+/**
+ * A resized / processed {@link Image} object.
+ * When Image object are processed or resized, a suitable Image_Cached object is returned, pointing to the
+ * cached copy of the processed image.
+ *
+ * @package framework
+ * @subpackage filesystem
+ */
+class RSImage_Cached extends RSImage {
+	
+	/**
+	 * Create a new cached image.
+	 * @param string $filename The filename of the image.
+	 * @param boolean $isSingleton This this to true if this is a singleton() object, a stub for calling methods.
+	 *                             Singletons don't have their defaults set.
+	 */
+	public function __construct($filename = null, $isSingleton = false) {
+		parent::__construct(array(), $isSingleton);
+		$this->ID = -1;
+		$this->Filename = $filename;
+	}
+	
+	public function getRelativePath() {
+		return $this->getField('Filename');
+	}
+	
+	/**
+	 * Prevent creating new tables for the cached record
+	 *
+	 * @return false
+	 */
+	public function requireTable() {
+		return false;
+	}	
+	
+	/**
+	 * Prevent writing the cached image to the database
+	 *
+	 * @throws Exception
+	 */
+	public function write($showDebug = false, $forceInsert = false, $forceWrite = false, $writeComponents = false) {
+		throw new Exception("{$this->ClassName} can not be written back to the database.");
+	}
 }
